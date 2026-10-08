@@ -102,7 +102,7 @@ try {
     if ($gitStatus) {
         Write-Host "`n[Notice] Working tree has uncommitted changes:" -ForegroundColor Yellow
         $gitStatus | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkYellow }
-        Write-Host "The release tag and source archive will capture committed repository state (HEAD).`n" -ForegroundColor Yellow
+        Write-Host "The release tag will capture committed repository state (HEAD).`n" -ForegroundColor Yellow
     }
 } catch { }
 
@@ -139,6 +139,18 @@ if ($targetVersion -ne $currentVersion) {
     Write-Host "Updating version: $currentVersion -> $targetVersion in $($csprojFile.Name)" -ForegroundColor Cyan
     $versionNode.Version = $targetVersion
     $csproj.Save($csprojPath)
+
+    # Keep manifest.json on disk in sync with bumped version
+    $manifestFile = Join-Path $ProjectDir "manifest.json"
+    if (Test-Path $manifestFile) {
+        try {
+            $manifestObj = Get-Content $manifestFile -Raw | ConvertFrom-Json
+            $manifestObj.version_number = $targetVersion.TrimStart('v')
+            $manifestJson = $manifestObj | ConvertTo-Json -Depth 4
+            [System.IO.File]::WriteAllText($manifestFile, $manifestJson + [Environment]::NewLine)
+            Write-Host "Updated manifest.json to v$($targetVersion.TrimStart('v')) on disk." -ForegroundColor Cyan
+        } catch { }
+    }
 } else {
     Write-Host "Using existing project version: $currentVersion (from $($csprojFile.Name))" -ForegroundColor Cyan
 }
@@ -146,6 +158,75 @@ if ($targetVersion -ne $currentVersion) {
 $cleanVersion = $targetVersion.TrimStart('v')
 $tagName = "v$cleanVersion"
 $releaseTitle = if ($Title) { $Title } else { $tagName }
+
+# 5. Verify manifest.json synchronization with project version and release commit
+Write-Host "`n[Prerequisite] Validating manifest.json synchronization..." -ForegroundColor Cyan
+$manifestPath = Join-Path $ProjectDir "manifest.json"
+if (-not (Test-Path $manifestPath)) {
+    Write-Error "Release blocked: 'manifest.json' not found in '$ProjectDir'."
+    exit 1
+}
+
+$diskManifest = $null
+try {
+    $diskManifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+} catch {
+    Write-Error "Release blocked: Failed to parse 'manifest.json' at '$manifestPath': $_"
+    exit 1
+}
+
+$diskVersion = $diskManifest.version_number
+if ($diskVersion -ne $cleanVersion) {
+    Write-Error @"
+Release blocked: manifest.json version ('$diskVersion') does not match project version ('$cleanVersion').
+When bumping the version number, manifest.json must be updated to match '$cleanVersion' and committed to git before releasing.
+"@
+    exit 1
+}
+
+# Verify manifest.json in git commit (HEAD) and ensure no uncommitted manifest changes
+try {
+    $isGit = (git -C $ProjectDir rev-parse --is-inside-work-tree 2>$null)
+    if ($LASTEXITCODE -eq 0 -and $isGit -eq "true") {
+        $headManifestRaw = git -C $ProjectDir show HEAD:manifest.json 2>$null
+        if ($LASTEXITCODE -eq 0 -and $headManifestRaw) {
+            $headManifest = $headManifestRaw | ConvertFrom-Json
+            $headVersion = $headManifest.version_number
+            if ($headVersion -ne $cleanVersion) {
+                if ($DryRun) {
+                    Write-Host "   [DRY RUN] Would block release: manifest.json in git commit (HEAD) is version '$headVersion', but release version is '$cleanVersion'." -ForegroundColor Yellow
+                } else {
+                    Write-Error @"
+Release blocked: manifest.json in git commit (HEAD) is version '$headVersion', but release version is '$cleanVersion'.
+All release commits must include the updated manifest.json when the version number is bumped.
+Please commit manifest.json before creating a release:
+   git add manifest.json $($csprojFile.Name)
+   git commit -m "feat: Release v$cleanVersion"
+"@
+                    exit 1
+                }
+            }
+        }
+
+        $manifestGitDiff = git -C $ProjectDir status --porcelain manifest.json 2>$null
+        if ($manifestGitDiff) {
+            if ($DryRun) {
+                Write-Host "   [DRY RUN] Would block release: manifest.json has uncommitted changes in working tree." -ForegroundColor Yellow
+            } else {
+                Write-Error @"
+Release blocked: manifest.json has uncommitted changes in the working tree.
+All release commits must include the updated manifest.json when the version number is bumped.
+Please commit manifest.json before creating a release:
+   git add manifest.json
+   git commit -m "chore: Update manifest.json to v$cleanVersion"
+"@
+                exit 1
+            }
+        }
+    }
+} catch { }
+
+Write-Host "   ✓ manifest.json is synchronized with v$cleanVersion and verified in release commit." -ForegroundColor Green
 
 # Pre-flight check: ensure release tag doesn't already exist on GitHub
 try {
@@ -168,15 +249,15 @@ if (-not $NoBuild) {
     Write-Host "`n[Step 1/4] Skipping build (-NoBuild specified)..." -ForegroundColor DarkGray
 }
 
-# 5. Package Mod & Source Archives
-Write-Host "`n[Step 2/4] Assembling release distribution and source archives..." -ForegroundColor Cyan
+# 5. Package Mod Distribution Archive
+Write-Host "`n[Step 2/4] Assembling release distribution package..." -ForegroundColor Cyan
 $packageScript = Join-Path $PSScriptRoot "package.ps1"
 if (-not (Test-Path $packageScript)) {
     Write-Error "package.ps1 not found at '$packageScript'."
     exit 1
 }
 
-& $packageScript -Configuration $Configuration -CreateSourceArchive -ProjectDir $ProjectDir
+& $packageScript -Configuration $Configuration -ProjectDir $ProjectDir
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Packaging failed. Aborting release."
     exit 1
@@ -188,21 +269,12 @@ $modZip = Get-ChildItem -Path $publishDir -Filter "*.zip" -ErrorAction SilentlyC
           Sort-Object LastWriteTime -Descending |
           Select-Object -First 1
 
-$sourceZip = Get-ChildItem -Path $publishDir -Filter "*-Source.zip" -ErrorAction SilentlyContinue |
-             Sort-Object LastWriteTime -Descending |
-             Select-Object -First 1
-
 if (-not $modZip) {
     Write-Error "Failed to locate distribution zip in '$publishDir'."
     exit 1
 }
-if (-not $sourceZip) {
-    Write-Error "Failed to locate source archive in '$publishDir'."
-    exit 1
-}
 
 Write-Host "Mod Package:    $($modZip.FullName)" -ForegroundColor Green
-Write-Host "Source Archive: $($sourceZip.FullName)" -ForegroundColor Green
 
 # 6. Extract Release Notes from CHANGELOG.md
 Write-Host "`n[Step 3/4] Extracting release notes from CHANGELOG.md for $cleanVersion..." -ForegroundColor Cyan
@@ -250,7 +322,6 @@ Write-Host "`n[Step 4/4] Creating GitHub Release ($statusDesc) for $tagName..." 
 $ghArgs = @(
     "release", "create", $tagName,
     $modZip.FullName,
-    $sourceZip.FullName,
     "--title", $releaseTitle,
     "--notes-file", $notesPath
 )
@@ -279,7 +350,6 @@ Write-Host "==========================================================" -Foregro
 Write-Host " Tag:         $tagName" -ForegroundColor Green
 Write-Host " Status:      $statusDesc" -ForegroundColor Green
 Write-Host " Package:     $($modZip.Name)" -ForegroundColor Green
-Write-Host " Source:      $($sourceZip.Name)" -ForegroundColor Green
 if ($releaseUrl) {
     Write-Host " URL:         $releaseUrl" -ForegroundColor Cyan
 }

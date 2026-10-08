@@ -21,6 +21,11 @@ permissions:
 jobs:
   publish-portals:
     runs-on: windows-latest
+    env:
+      THUNDERSTORE_TOKEN: ${{ secrets.THUNDERSTORE_TOKEN }}
+      HEXIUM_TOKEN: ${{ secrets.HEXIUM_TOKEN }}
+      COMMUNITY_NAMESPACE: ${{ secrets.COMMUNITY_NAMESPACE || secrets.THUNDERSTORE_NAMESPACE || secrets.HEXIUM_NAMESPACE }}
+      COMMUNITY: ${{ secrets.COMMUNITY || 'valheim' }}
 
     steps:
       - name: Checkout Code
@@ -63,10 +68,6 @@ jobs:
 
       - name: Publish to Thunderstore
         if: ${{ env.THUNDERSTORE_TOKEN != '' }}
-        env:
-          THUNDERSTORE_TOKEN: ${{ secrets.THUNDERSTORE_TOKEN }}
-          COMMUNITY_NAMESPACE: ${{ secrets.COMMUNITY_NAMESPACE || secrets.THUNDERSTORE_NAMESPACE }}
-          COMMUNITY: ${{ secrets.COMMUNITY || 'valheim' }}
         shell: pwsh
         run: |
           $dryRunFlag = if ("${{ inputs.dry_run }}" -eq "true") { @("-DryRun") } else { @() }
@@ -74,10 +75,6 @@ jobs:
 
       - name: Publish to Hexium
         if: ${{ env.HEXIUM_TOKEN != '' }}
-        env:
-          HEXIUM_TOKEN: ${{ secrets.HEXIUM_TOKEN }}
-          COMMUNITY_NAMESPACE: ${{ secrets.COMMUNITY_NAMESPACE || secrets.HEXIUM_NAMESPACE }}
-          COMMUNITY: ${{ secrets.COMMUNITY || 'valheim' }}
         shell: pwsh
         run: |
           $dryRunFlag = if ("${{ inputs.dry_run }}" -eq "true") { @("-DryRun") } else { @() }

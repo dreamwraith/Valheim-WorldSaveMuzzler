@@ -8,7 +8,7 @@ This directory (`.scripts/`) contains all developer automation tools for managin
 
 | Script | Purpose |
 | :--- | :--- |
-| `release.ps1` | Primary release coordinator: compiles in `Release`, creates mod & source archives, extracts changelog notes, and publishes GitHub Releases (Draft by default, or published with `-Publish`). |
+| `release.ps1` | Primary release coordinator: compiles in `Release`, packages distribution archive, extracts changelog notes, and publishes GitHub Releases (Draft by default, or published with `-Publish`). |
 | `package.ps1` | Standalone packaging engine: semantic version bumping, manifest sync, source archive generation, and distribution archive creation. |
 | `publish.ps1` | Master publisher wrapper for direct Thunderstore and Hexium API upload without GitHub Actions. |
 | `publish-thunderstore.ps1` | Standalone script for direct Thunderstore API submission (`thunderstore.io`). |

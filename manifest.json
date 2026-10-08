@@ -1,6 +1,6 @@
 {
   "name": "WorldSaveMuzzler",
-  "version_number": "1.0.1",
+  "version_number": "1.0.2",
   "website_url": "https://github.com/dreamwraith/Valheim-WorldSaveMuzzler",
   "description": "Client-side HUD quality-of-life mod for Valheim that relocates or mutes intrusive center-screen world save countdown warnings and notifications.",
   "dependencies": [
