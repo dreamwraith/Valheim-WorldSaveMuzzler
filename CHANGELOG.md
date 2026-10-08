@@ -5,6 +5,12 @@ All notable changes to **WorldSaveMuzzler** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-10-08
+
+### Changed
+- Simplified **Valheim Community Patch Extras** superseding detection to disable whenever the mod is present, removing the minimum version threshold check.
+- Updated release tooling.
+
 ## [1.0.0] - 2026-09-18
 
 ### Added
