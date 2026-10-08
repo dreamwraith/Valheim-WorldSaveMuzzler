@@ -7,9 +7,9 @@ A standalone, 100% client-side quality-of-life mod for Valheim that slaps a muzz
 
 > [!IMPORTANT]
 > **Valheim Community Patch Extras Notice:**
-> This code was already merged into **Valheim Community Patch Extras** versions over `0.28.0`, but is being released standalone for those who do not want the VCP Extra mod installed.
+> This code was already merged into **Valheim Community Patch Extras**, but is being released standalone for those who do not want the VCP Extra mod installed.
 > 
-> If Valheim Community Patch Extras (versions over `0.28.0`) is installed, WorldSaveMuzzler will automatically detect it and safely self-disable to prevent duplicate handling.
+> If Valheim Community Patch Extras is installed, WorldSaveMuzzler will automatically detect it and safely self-disable to prevent duplicate handling.
 
 ---
 
@@ -43,7 +43,7 @@ Settings can be customized directly in-game using the BepInEx **Configuration Ma
 
 ## Compatibility
 
-- **Valheim Community Patch Extras**: This code was already merged into **Valheim Community Patch Extras** versions over `0.28.0`, but is released standalone for those who do not want the VCP Extra mod installed. If VCP Extras (version > `0.28.0`) is present, WorldSaveMuzzler automatically self-disables to prevent duplicate or conflicting notification handling.
+- **Valheim Community Patch Extras**: This code was already merged into **Valheim Community Patch Extras**, but is released standalone for those who do not want the VCP Extra mod installed. If VCP Extras is present, WorldSaveMuzzler automatically self-disables to prevent duplicate or conflicting notification handling.
 - **100% Client-Side**: Safe to use on any server. The server does not need this mod installed.
 - **Smart Detection**: Recognizes native Valheim localization keys (`$msg_worldsavewarning`, `$msg_worldsaved`) as well as plain English countdown broadcasts from common server scripts (e.g., *"World save in 30s"*).
 - **Headless Safe**: Inert on headless servers where `MessageHud` is not rendered.
@@ -89,6 +89,19 @@ For non-standard Steam library locations, copy `WorldSaveMuzzler.csproj.user.exa
   </PropertyGroup>
 </Project>
 ```
+
+---
+
+## Packaging, Publishing & Releases
+
+All developer automation tools for release management, packaging, and publishing to **Thunderstore** and **Hexium** are organized in the [`.scripts/`](.scripts/) folder:
+
+- **Release Management**: [`release.ps1`](.scripts/release.ps1) compiles in `Release`, creates mod & source archives, extracts changelog notes, and publishes GitHub Releases (Draft by default, or published with `-Publish`) using the `gh` CLI.
+- **Packaging & Version Bumping**: [`package.ps1`](.scripts/package.ps1) increments SemVer in `WorldSaveMuzzler.csproj`, updates `manifest.json`, and bundles distribution archives.
+- **Portal Publishing**: [`publish.ps1`](.scripts/publish.ps1) uploads directly to Thunderstore and Hexium APIs.
+- **CI/CD Workflow**: [`.github/workflows/publish.yml.example`](.github/workflows/publish.yml.example) provides an automated GitHub Actions workflow to publish to Thunderstore and Hexium whenever a GitHub Release is published.
+
+For detailed documentation on flags, workflows, and secret configuration, see [`.scripts/README.md`](.scripts/README.md).
 
 ---
 

@@ -3,6 +3,7 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using BepInEx.Bootstrap;
 using HarmonyLib;
 
 namespace WorldSaveMuzzler
@@ -15,7 +16,6 @@ namespace WorldSaveMuzzler
         public const string ModName = "WorldSaveMuzzler";
         public const string ModVersion = VersionInfo.Version;
         public const string CommunityPatchExtrasGUID = "MidnightsFX.ValheimCommunityPatchExtras";
-        private static readonly System.Version MinSupersededExtrasVersion = new System.Version(0, 28, 0);
 
         internal static Plugin? Instance { get; private set; }
         internal static ManualLogSource Log = null!;
@@ -35,11 +35,11 @@ namespace WorldSaveMuzzler
             Instance = this;
             Log = Logger;
 
-            if (IsCommunityPatchExtrasSuperseding(out var extrasVersion))
+            if (Chainloader.PluginInfos.ContainsKey(CommunityPatchExtrasGUID))
             {
                 Log.LogWarning(
-                    $"{ModName} v{ModVersion} is self-disabling: Valheim Community Patch Extras v{extrasVersion} " +
-                    $"(> {MinSupersededExtrasVersion}) is installed, which natively handles world save notifications.");
+                    $"{ModName} v{ModVersion} is self-disabling: Valheim Community Patch Extras is installed, " +
+                    "which natively handles world save notifications.");
                 enabled = false;
                 return;
             }
@@ -59,29 +59,6 @@ namespace WorldSaveMuzzler
 
             _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGUID);
             Log.LogInfo($"{ModName} v{ModVersion} loaded successfully.");
-        }
-
-        private static bool IsCommunityPatchExtrasSuperseding(out System.Version? detectedVersion)
-        {
-            detectedVersion = null;
-            if (BepInEx.Bootstrap.Chainloader.PluginInfos == null)
-            {
-                return false;
-            }
-
-            foreach (var kvp in BepInEx.Bootstrap.Chainloader.PluginInfos)
-            {
-                if (string.Equals(kvp.Key, CommunityPatchExtrasGUID, StringComparison.OrdinalIgnoreCase))
-                {
-                    detectedVersion = kvp.Value?.Metadata?.Version;
-                    if (detectedVersion != null && detectedVersion > MinSupersededExtrasVersion)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
 
         private void OnDestroy()
