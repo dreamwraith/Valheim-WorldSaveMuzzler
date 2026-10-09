@@ -1,5 +1,18 @@
 # WorldSaveMuzzler
 
+[![GitHub Release](https://img.shields.io/github/v/release/dreamwraith/Valheim-WorldSaveMuzzler?logo=github&color=1081c2)](https://github.com/dreamwraith/Valheim-WorldSaveMuzzler/releases)
+[![GitHub Downloads](https://img.shields.io/github/downloads/dreamwraith/Valheim-WorldSaveMuzzler/total?logo=github&color=1081c2)](https://github.com/dreamwraith/Valheim-WorldSaveMuzzler/releases)
+[![Last Commit](https://img.shields.io/github/last-commit/dreamwraith/Valheim-WorldSaveMuzzler?logo=git)](https://github.com/dreamwraith/Valheim-WorldSaveMuzzler/commits/master)
+[![Publish Status](https://img.shields.io/github/actions/workflow/status/dreamwraith/Valheim-WorldSaveMuzzler/publish.yml?label=Publish%20Portals&logo=githubactions)](https://github.com/dreamwraith/Valheim-WorldSaveMuzzler/actions)
+[![Thunderstore](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fthunderstore.io%2Fapi%2Fexperimental%2Fpackage%2FDreamWraith%2FWorldSaveMuzzler%2F&query=%24.latest.version_number&label=Thunderstore&logo=thunderstore&color=2980b9)](https://thunderstore.io/c/valheim/p/DreamWraith/WorldSaveMuzzler/)
+[![Hexium](https://img.shields.io/badge/Hexium-WorldSaveMuzzler-6c5ce7)](https://valheim.hexium.gg/mods/DreamWraith/WorldSaveMuzzler)
+[![Game: Valheim](https://img.shields.io/badge/Valheim-Deep_North_%2F_1.x-1b2838?logo=steam&logoColor=white)](https://store.steampowered.com/app/892970/Valheim/)
+[![BepInEx Pack](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fthunderstore.io%2Fapi%2Fexperimental%2Fpackage%2Fdenikson%2FBepInExPack_Valheim%2F&query=%24.latest.version_number&label=BepInEx&color=5B57E7)](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/)
+[![Target: .NET 4.8](https://img.shields.io/badge/.NET%20Framework-4.8-512BD4?logo=dotnet)](WorldSaveMuzzler.csproj)
+[![Client Side Only](https://img.shields.io/badge/Type-100%25%20Client--Side-brightgreen)](README.md#the-solution)
+[![License](https://img.shields.io/github/license/dreamwraith/Valheim-WorldSaveMuzzler?color=blue)](LICENSE.md)
+[![AI Philosophy](https://img.shields.io/badge/AI%20Philosophy-Software%20Craft-2ea44f?logo=github)](https://gist.github.com/dreamwraith/77c91d656c842611bf8c40febf8056f2)
+
 A standalone, 100% client-side quality-of-life mod for Valheim that slaps a muzzle on those obnoxious, screen-stealing world save alerts so they finally shut up and stop screaming across your crosshair while you're fighting for your life.
 
 > [!NOTE]
@@ -105,6 +118,7 @@ For detailed documentation on flags, workflows, and secret configuration, see [`
 
 ---
 
-## License
-
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE.md](LICENSE.md) file for details.
+## License, Author Notes
+- This project is licensed under the GNU General Public License v3.0 - see the [LICENSE.md](LICENSE.md) file for details.
+- [**A Small Note from Me about Valheim Modding Specifically**](https://gist.github.com/dreamwraith/98564f8441dc234bfadd7e2b605c694c) - Thoughts on open-source modding, community inclusivity, and anti-gatekeeping.
+- [**A Note on AI, Software Craft, and Why This Code Exists**](https://gist.github.com/dreamwraith/77c91d656c842611bf8c40febf8056f2) - Personal essay on software craft, human agency, and engineering responsibility.
