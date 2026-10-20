@@ -73,7 +73,7 @@ namespace WorldSaveMuzzler
             [HarmonyPatch(nameof(MessageHud.ShowMessage))]
             private static bool ShowMessagePrefix(ref MessageHud.MessageType type, ref string text)
             {
-                if (NoticeMode == null || NoticeMode.Value == SaveNoticeMode.Native)
+                if (NoticeMode.Value == SaveNoticeMode.Native)
                 {
                     return true;
                 }

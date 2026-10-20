@@ -2,11 +2,10 @@
 
 [![GitHub Release](https://img.shields.io/github/v/release/dreamwraith/Valheim-WorldSaveMuzzler?logo=github&color=1081c2)](https://github.com/dreamwraith/Valheim-WorldSaveMuzzler/releases)
 [![GitHub Downloads](https://img.shields.io/github/downloads/dreamwraith/Valheim-WorldSaveMuzzler/total?logo=github&color=1081c2)](https://github.com/dreamwraith/Valheim-WorldSaveMuzzler/releases)
-[![Last Commit](https://img.shields.io/github/last-commit/dreamwraith/Valheim-WorldSaveMuzzler?logo=git)](https://github.com/dreamwraith/Valheim-WorldSaveMuzzler/commits/master)
+[![Last Commit](https://img.shields.io/github/last-commit/dreamwraith/Valheim-WorldSaveMuzzler?logo=git)](https://github.com/dreamwraith/Valheim-WorldSaveMuzzler/commits/main)
 [![Publish Status](https://img.shields.io/github/actions/workflow/status/dreamwraith/Valheim-WorldSaveMuzzler/publish.yml?label=Publish%20Portals&logo=githubactions)](https://github.com/dreamwraith/Valheim-WorldSaveMuzzler/actions)
 [![Thunderstore](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fthunderstore.io%2Fapi%2Fexperimental%2Fpackage%2FDreamWraith%2FWorldSaveMuzzler%2F&query=%24.latest.version_number&label=Thunderstore&logo=thunderstore&color=2980b9)](https://thunderstore.io/c/valheim/p/DreamWraith/WorldSaveMuzzler/)
-[![Hexium](https://img.shields.io/badge/Hexium-WorldSaveMuzzler-6c5ce7)](https://valheim.hexium.gg/mods/DreamWraith/WorldSaveMuzzler)
-[![Nexus Mods](https://img.shields.io/badge/Nexus_Mods-4330-da8e35?logo=nexusmods&logoColor=white)](https://www.nexusmods.com/valheim/mods/4330)
+[![Nexus Mods](https://img.shields.io/badge/Nexus_Mods-WorldSaveMuzzler-da8d24?logo=nexusmods)](https://www.nexusmods.com/valheim/mods/4330)
 [![Game: Valheim](https://img.shields.io/badge/Valheim-Deep_North_%2F_1.x-1b2838?logo=steam&logoColor=white)](https://store.steampowered.com/app/892970/Valheim/)
 [![BepInEx Pack](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fthunderstore.io%2Fapi%2Fexperimental%2Fpackage%2Fdenikson%2FBepInExPack_Valheim%2F&query=%24.latest.version_number&label=BepInEx&color=5B57E7)](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/)
 [![Target: .NET 4.8](https://img.shields.io/badge/.NET%20Framework-4.8-512BD4?logo=dotnet)](WorldSaveMuzzler.csproj)
@@ -71,7 +70,7 @@ Settings can be customized directly in-game using the BepInEx **Configuration Ma
 
 ### Mod Manager (Recommended)
 1. Install via **Gale**, **Thunderstore Mod Manager**, or **r2modman**.
-2. Launch the game and enjoy a clear combat view!
+2. Launch Valheim.
 
 ### Manual Installation
 1. Ensure **BepInExPack Valheim** is installed.
@@ -92,28 +91,21 @@ dotnet build -c Release
 The compiled assembly will be placed in `bin/Release/net48/WorldSaveMuzzler.dll`. Building in `Release` configuration also automatically packages the distribution ZIP to `bin/Publish/WorldSaveMuzzler-<Version>.zip`.
 
 ### Custom & CI Paths
-For non-standard Steam library locations, copy `WorldSaveMuzzler.csproj.user.example` to `WorldSaveMuzzler.csproj.user` in the project root (this file is git-ignored and automatically loaded by MSBuild):
+For custom installations, non-standard Steam paths, or mod manager profiles, copy [`Environment.props.example`](Environment.props.example) to `Environment.props` in the project root to configure your paths:
+- `VALHEIM_INSTALL`: Root Valheim installation folder.
+- `BEPINEX_PATH`: Root BepInEx folder (containing `core`, `plugins`, etc.).
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<Project>
-  <PropertyGroup>
-    <GamePath>D:\SteamLibrary\steamapps\common\Valheim</GamePath>
-    <BepInExCorePath>$(UserProfile)\AppData\Roaming\com.kesomannen.gale\valheim\profiles\<ProfileName>\BepInEx\core</BepInExCorePath>
-  </PropertyGroup>
-</Project>
-```
-
+Alternatively, you can set `VALHEIM_INSTALL` and `BEPINEX_PATH` as environment variables.
 ---
 
 ## Packaging, Publishing & Releases
 
-All developer automation tools for release management, packaging, and publishing to **Thunderstore**, **Hexium**, and **Nexus Mods** are consolidated into the single PowerShell 7 entrypoint [.scripts/modtools.ps1](.scripts/modtools.ps1), powered by the shared [**DW.ValheimModTools**](https://github.com/DreamWraith/DW-ValheimModTools) module:
+All developer automation tools for release management, packaging, and publishing to **Thunderstore** and **Nexus Mods** are consolidated into the single PowerShell 7 entrypoint [.scripts/modtools.ps1](.scripts/modtools.ps1), powered by the shared [**DW.ValheimModTools**](https://github.com/DreamWraith/DW-ValheimModTools) module:
 
 - **Release Management**: pwsh ./.scripts/modtools.ps1 release compiles in Release, creates mod & source archives, extracts changelog notes, and publishes GitHub Releases (Draft by default, or published with -Publish) using the gh CLI.
 - **Packaging & Version Bumping**: pwsh ./.scripts/modtools.ps1 package -Bump Patch increments SemVer in WorldSaveMuzzler.csproj, updates manifest.json, and bundles distribution archives.
-- **Portal Publishing**: pwsh ./.scripts/modtools.ps1 publish -Target All uploads directly to Thunderstore, Hexium, and Nexus Mods APIs.
-- **CI/CD Workflow**: [.github/workflows/publish.yml](.github/workflows/publish.yml) provides an automated GitHub Actions workflow to publish to Thunderstore, Hexium, and Nexus Mods whenever a GitHub Release is published.
+- **Portal Publishing**: pwsh ./.scripts/modtools.ps1 publish -Target All uploads directly to Thunderstore and Nexus Mods APIs.
+- **CI/CD Workflow**: [.github/workflows/publish.yml](.github/workflows/publish.yml) provides an automated GitHub Actions workflow to publish to Thunderstore and Nexus Mods whenever a GitHub Release is published.
 
 For detailed documentation on flags, workflows, and secret configuration, see [.scripts/README.md](.scripts/README.md).
 
