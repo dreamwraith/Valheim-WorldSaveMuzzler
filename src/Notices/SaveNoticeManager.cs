@@ -5,11 +5,22 @@ namespace WorldSaveMuzzler.Notices
 {
     internal static class SaveNoticeManager
     {
+        private const string WorldSavedKey = "$msg_worldsaved";
+        private const string WorldSaveWarningKey = "$msg_worldsavewarning";
+
         public static bool HandleShowMessage(ref MessageHud.MessageType type, ref string text)
         {
             if (ModConfig.NoticeMode.Value == SaveNoticeMode.Native)
             {
                 return true;
+            }
+
+            // i was only capturing centered messages before, so this also catches the save finished notice in the top-left feed
+            if (ModConfig.NoticeMode.Value == SaveNoticeMode.Mute &&
+                !string.IsNullOrEmpty(text) &&
+                HasMessageKey(text, WorldSavedKey))
+            {
+                return false;
             }
 
             if (type != MessageHud.MessageType.Center || string.IsNullOrEmpty(text))
@@ -32,8 +43,9 @@ namespace WorldSaveMuzzler.Notices
 
         private static bool IsWorldSaveMessage(string text)
         {
-            // Raw localization keys used by native Game.UpdateSaving and ZNet.PrintWorldSaveMessage
-            if (text.Contains("$msg_worldsave"))
+            // i was clobbering server low-disk alerts and other valuable messages here
+            // moved to more deterministic check to avoid clobbering and still silence messages
+            if (HasMessageKey(text, WorldSaveWarningKey) || HasMessageKey(text, WorldSavedKey))
             {
                 return true;
             }
@@ -63,5 +75,9 @@ namespace WorldSaveMuzzler.Notices
 
             return false;
         }
+
+        private static bool HasMessageKey(string text, string key) =>
+            text.StartsWith(key, StringComparison.Ordinal) &&
+            (text.Length == key.Length || text[key.Length] == ' ');
     }
 }
