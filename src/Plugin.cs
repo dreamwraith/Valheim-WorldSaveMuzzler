@@ -3,6 +3,8 @@ using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Bootstrap;
 using HarmonyLib;
+using UnityEngine;
+using UnityEngine.Rendering;
 using WorldSaveMuzzler.Configuration;
 
 namespace WorldSaveMuzzler
@@ -35,6 +37,12 @@ namespace WorldSaveMuzzler
             }
 
             ModConfig.Initialize(Config);
+
+            // same check as jotunns GUIManager.IsHeadless(), jotunn isnt here at runtime
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            {
+                return;
+            }
 
             _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), ModGUID);
             Log.LogInfo($"{ModName} v{ModVersion} loaded successfully.");
