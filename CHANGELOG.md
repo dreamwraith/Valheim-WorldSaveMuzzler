@@ -5,6 +5,17 @@ All notable changes to **WorldSaveMuzzler** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-11-01
+
+### Fixed
+- Mute no longer clobbers other server messages, like the cloud storage and low disk space warnings.
+- Mute catches the save message in the top left feed too, not just the center screen one.
+
+### Changed
+- Skips its patch on dedicated servers.
+- Bumped BepInExPack to 5.4.2360.
+- Build tooling and source layout now match the rest of my mods.
+
 ## [1.1.0] - 2026-10-19
 
 ### Changed
