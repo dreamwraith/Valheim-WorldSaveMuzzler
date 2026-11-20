@@ -9,22 +9,16 @@ namespace WorldSaveMuzzler.Configuration
         Native
     }
 
-    internal static class ModConfig
+    internal sealed class ModConfig(ConfigFile config)
     {
-        public static ConfigEntry<SaveNoticeMode> NoticeMode = null!;
+        public static ModConfig Instance { get; private set; } = null!;
 
-        public static void Initialize(ConfigFile config)
-        {
-            NoticeMode = config.Bind(
-                "1 - General",
-                "WorldSaveNoticeMode",
-                SaveNoticeMode.RelocateToTopLeft,
-                new ConfigDescription(
-                    "Controls how autosave countdown warnings and completion notifications are displayed.\n" +
-                    "RelocateToTopLeft moves them to the subtle top-left corner feed (default).\n" +
-                    "Mute hides them completely.\n" +
-                    "Native leaves them centered across the screen.")
-            );
-        }
+        public ConfigEntry<SaveNoticeMode> NoticeMode { get; } = config.Bind(
+            "1 - General",
+            "WorldSaveNoticeMode",
+            SaveNoticeMode.RelocateToTopLeft,
+            "Sets how world save countdown warnings and completion notices are displayed (RelocateToTopLeft = move center countdowns to top-left feed, Mute = hide both warnings and completion notices, Native = keep base game display).");
+
+        public static void Initialize(ConfigFile configFile) => Instance = new ModConfig(configFile);
     }
 }

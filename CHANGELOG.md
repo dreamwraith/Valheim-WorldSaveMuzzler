@@ -5,6 +5,14 @@ All notable changes to **WorldSaveMuzzler** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-11-20
+
+### Fixed
+- Fixed readme issues - the display modes were a bit off there and in the config description.
+
+### Changed
+- Code cleanup.
+
 ## [1.2.0] - 2026-11-01
 
 ### Fixed
@@ -19,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2026-10-19
 
 ### Changed
-- Standardized build pipeline with compile-time publicized game assemblies via Jötunn prebuild task (`DoPrebuild.props` and build-only `JotunnLib`).
+- Standardized build pipeline with compile-time publicized game assemblies via Jotunn prebuild task (`DoPrebuild.props` and build-only `JotunnLib`).
 - Remove Hexium publish target and tooling.
 - Removed redundant config null check.
 

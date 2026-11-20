@@ -1,5 +1,5 @@
 using HarmonyLib;
-using WorldSaveMuzzler.Notices;
+using WorldSaveMuzzler.Core.Notices;
 
 namespace WorldSaveMuzzler.Patches
 {
@@ -8,7 +8,7 @@ namespace WorldSaveMuzzler.Patches
     {
         [HarmonyPrefix]
         [HarmonyPatch(nameof(MessageHud.ShowMessage))]
-        private static bool ShowMessagePrefix(ref MessageHud.MessageType type, ref string text) =>
-            SaveNoticeManager.HandleShowMessage(ref type, ref text);
+        private static bool ShowMessagePrefix(ref MessageHud.MessageType type, string text) =>
+            SaveNoticeManager.HandleShowMessage(ref type, text);
     }
 }

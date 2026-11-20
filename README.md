@@ -28,29 +28,27 @@ A standalone, 100% client-side quality-of-life mod for Valheim that slaps a muzz
 
 ## The Problem
 
-In vanilla Valheim, `Game.UpdateSaving` broadcasts a 30-second autosave warning (`"$msg_worldsavewarning 30s"`) using `MessageHud.MessageType.Center`. The save completion notice (`$msg_worldsaved`) already appears in the top-left feed.
+In the base game, `Game.UpdateSaving` broadcasts a 30-second autosave warning (`"$msg_worldsavewarning 30s"`) using `MessageHud.MessageType.Center`. The save completion notice (`$msg_worldsaved`) already appears in the top-left feed.
 
-This splashes a giant, screen-filling yellow banner directly across your crosshair and combat view. Furthermore, many dedicated servers and admin management scripts broadcast custom countdowns to all players using center-screen toasts.
-
-During intense combat, boss encounters, ocean sailing, or delicate scaffolding construction, having the middle of your screen suddenly blinded by an autosave banner can easily cause mistimed parries, disorientation, accidental falls, or death.
+This displays a large yellow banner across the crosshair and center of the screen. Dedicated servers and server scripts also broadcast custom save countdowns as center-screen messages.
 
 ## The Solution
 
-**WorldSaveMuzzler** intercepts `MessageHud.ShowMessage` and provides clean, customizable display options:
+**WorldSaveMuzzler** intercepts `MessageHud.ShowMessage` and provides three display modes:
 
-- **RelocateToTopLeft (Default)**: Moves world save countdown warnings into the subtle top-left notification feed. You stay informed of pending saves without having your crosshair or view blocked.
-- **Mute**: Hides world save notifications, including the save completion notice.
-- **Native**: Leaves notifications centered across the screen unaltered.
+- **RelocateToTopLeft (Default)**: Moves center-screen world save countdown warnings to the top-left notification feed.
+- **Mute**: Hides world save countdown warnings and the top-left save completion notice.
+- **Native**: Keeps the base game display unchanged (countdown warnings centered, save completion notice in the top-left feed).
 
 ---
 
 ## Configuration
 
-Settings can be customized directly in-game using the BepInEx **Configuration Manager** (`F1`, installed separately) or by editing `BepInEx/config/dreamwraith.WorldSaveMuzzler.cfg`:
+Change settings in-game with the BepInEx **Configuration Manager** (`F1`, installed separately) or edit `BepInEx/config/dreamwraith.WorldSaveMuzzler.cfg`:
 
 | Section | Key | Type | Default | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| `1 - General` | `WorldSaveNoticeMode` | `enum` | `RelocateToTopLeft` | Display mode: `RelocateToTopLeft` (subtle top-left corner feed), `Mute` (completely hidden), or `Native` (centered yellow banner). |
+| `1 - General` | `WorldSaveNoticeMode` | `enum` | `RelocateToTopLeft` | Display mode: `RelocateToTopLeft` (move center countdowns to top-left feed), `Mute` (hide countdown warnings and completion notices), or `Native` (base game display). |
 
 ---
 
@@ -58,7 +56,7 @@ Settings can be customized directly in-game using the BepInEx **Configuration Ma
 
 - **Valheim Community Patch Extras**: This code was already merged into **Valheim Community Patch Extras**, but is released standalone for those who do not want the VCP Extra mod installed. If VCP Extras is present, WorldSaveMuzzler automatically self-disables to prevent duplicate or conflicting notification handling. WorldSaveMuzzler settings then stop applying and no config entries exist. Set `HUD` > `World Save Notice Mode` in VCP Extras instead. It defaults to `Native`, so center-screen banners return until it is changed.
 - **100% Client-Side**: Safe to use on any server. The server does not need this mod installed.
-- **Message Matching**: Matches the game's world save countdown (`$msg_worldsavewarning`), plus any Center message containing "world save" or "saving world", such as countdowns from server scripts (e.g., *"World save in 30s"*).
+- **Message Matching**: Matches the game's save warning and completion keys (`$msg_worldsavewarning`, `$msg_worldsaved`), their localized text in center-screen messages, and any center-screen message containing "world save" or "saving world" (for example, server script countdowns like *"World save in 30s"*). Server low-disk and cloud-storage alerts are not matched.
 - **Server Install**: Has no effect on a dedicated server. Each player installs it on their own client.
 
 ---
@@ -104,6 +102,7 @@ You can also find and message DreamWraith on these Valheim Discord servers:
 
 - [**WispTorchHeeler**](https://thunderstore.io/c/valheim/p/DreamWraith/WispTorchHeeler/): Tiered Mistlands wisp torches and lamps with expanded mist clearance, torch painting, and Wisplight customization.
 - [**PersonalChestHeeler**](https://thunderstore.io/c/valheim/p/DreamWraith/PersonalChestHeeler/): Tiered personal locked storage chests with server-synced capacity and crafting recipes.
+- [**PlantBiomeHeeler**](https://thunderstore.io/c/valheim/p/DreamWraith/PlantBiomeHeeler/): Terrain overlay and HUD that show which biome a crop or sapling actually gets, with two-tone borders and optional hatch lines.
 
 ### HUD
 

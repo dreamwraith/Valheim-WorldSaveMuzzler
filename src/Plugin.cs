@@ -18,13 +18,11 @@ namespace WorldSaveMuzzler
         public const string ModVersion = VersionInfo.Version;
         public const string CommunityPatchExtrasGUID = "MidnightsFX.ValheimCommunityPatchExtras";
 
-        internal static Plugin? Instance { get; private set; }
-        internal static ManualLogSource Log = null!;
+        internal static ManualLogSource Log { get; private set; } = null!;
         private Harmony? _harmony;
 
         private void Awake()
         {
-            Instance = this;
             Log = Logger;
 
             if (Chainloader.PluginInfos.ContainsKey(CommunityPatchExtrasGUID))
